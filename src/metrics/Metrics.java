@@ -62,20 +62,6 @@ public class Metrics {
 			return diff;
 		}	
 	};
-	
-//	public Metrics(float precision, float TPR, float FPR, float F1, float accuracy) {
-//		this.precision = precision;
-//		this.TPR = TPR;
-//		this.FPR = FPR;
-//		this.F1 = F1;
-//		this.accuracy = accuracy;
-//		
-//		this.threshold_decision = threshold_decision;
-//		
-//		this.count = 1;
-//		this.roc_count = 0;
-//		this.roc_all_count = 0;
-//	}
 
 	
 	public static String [] titles() {
@@ -157,8 +143,6 @@ public class Metrics {
 			this.TPRlist.add(this.TPRlist_all.get(i) / (float)count); //  elementwise plus
 		}
 		
-//		this.FPRlist = FPRlist_all;
-//		this.TPRlist = TPRlist_all;
 	}
 
 	
