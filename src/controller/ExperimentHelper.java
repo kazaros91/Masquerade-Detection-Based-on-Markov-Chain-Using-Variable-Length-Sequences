@@ -13,15 +13,6 @@ import view.Table;
 
 
 public class ExperimentHelper {
-	
-//	private static List<Float> xData_all = new ArrayList<Float>();
-//	private static List<Float> yData_all = new ArrayList<Float>();
-	
-	// DELETE
-	public static void flush_ROC_data() {
-//		xData_all = new ArrayList<Float>();
-//		yData_all = new ArrayList<Float>();
-	}
 
 	// get Decision Values
 	public static List<List<Float>> getDecisionValues(VariableLengthMethod<?> method, DetectionData1 detectionData) {
@@ -31,12 +22,6 @@ public class ExperimentHelper {
 		
 		result = method.detect( detectionData.getTruePositiveData() );
 		DD.add(result.getDecisionValues());
-		
-		// PU
-//		for ( int i = 0; i < detectionData.getTruePositiveData().size(); ++i) {
-//			result = method.detect( detectionData.getTruePositiveData(i) );
-//			DD.add(result.getDecisionValues());
-//		}
 		
 		return DD;
 	}
@@ -95,7 +80,6 @@ public class ExperimentHelper {
 //					System.out.println( "FPR = " + FPR + ", TPR = " + TPR + ", threshold = " + threshold);
 //				}
 			}
-//			Metrics metrics = new Metrics(avg_precision / (float)count, avg_TPR / (float)count, avg_FPR / (float)count, avg_F1 / (float)count, avg_accuracy / (float)count);
 //			System.out.println("end roc\n");
 
 		metrics.add_ROC_series(xData, yData);
@@ -103,7 +87,7 @@ public class ExperimentHelper {
 		return metrics;
 	}
 	
-	// plot ROCCurves
+	// plot ROCCurves and save classification_result table
 	public static Table plotROCCurves(String testDir, int windowSize, String name, String [] seriesNames, Metrics... metrics) {
 		
 		// plot ROCCurves
@@ -124,20 +108,5 @@ public class ExperimentHelper {
 		
 		return table;
 	}
-
-//	// plot ROCCurves
-//	public static void plotAvgROCCurves(String testDir, int windowSize, String name, String [] seriesNames, Metrics... metrics) {
-//		
-//		// plot ROCCurves
-//		final String plotDirectory = testDir + "/roc/";
-//		Utils.makeDir(plotDirectory);
-//		PlotXY view = new PlotXY(name, "FPR", "TPR", plotDirectory);   //  appName, plotName, Xname, Yname, outputDirectory;
-//		Table table = new Table();
-//		for ( int i = 0; i < metrics.length; ++i ) {
-//			view.add(metrics_avg.xData_all[0], metrics_avg.yData_all[0], seriesNames[i]);
-//		}
-//		view.draw();
-//	}
-	
 	
 }
