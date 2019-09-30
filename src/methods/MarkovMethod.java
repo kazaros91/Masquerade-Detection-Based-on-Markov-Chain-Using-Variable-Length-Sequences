@@ -57,7 +57,7 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 		int h = H - N*u;
 		assert( H == h*v + (N-h)*u );		
 		
-		//	Creating lambda Profile
+		//  Creating lambda Profile
 		Profile Lambda = new Profile();
 		for ( int i = 0; i < h; ++i ) {   //  h*v sets  
 			ArrayList<Sequence> sequences = new ArrayList<Sequence>();  // to build lambda[i] 
@@ -77,7 +77,7 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 		}
 		assert( N == Lambda.size() );
 		//  note that the last added element has index H-1 == t(1) + t(2) + ... + t(W) - 1 
-		//	end of creating lambda Profile
+		//  end of creating lambda Profile
 	
 		return Lambda;
 	}
@@ -97,9 +97,7 @@ public class MarkovMethod implements VariableLengthMethod<String> {
  			g = shortSequenceMax;
  		else
  			return null;
-// 		int length = LGS.getWeightedFrequency(shortSequenceMax) > 0 ? shortSequenceMax.length() : 1;
  		
-// 		String g = ListString.getString(s, j, j + length);
  		List<List<String>> pattern = new ArrayList<List<String>>();
  		pattern.add(g);
  		
@@ -116,10 +114,10 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 			
 			int i;
 			int state;
-			if ( pattern != null ) {  // pattern is not empty
+			if ( pattern != null ) {   // pattern is not empty
 				List<String> g = pattern.get(0);
 				
-				state = Lambda.getIndex(g);   //  get index of set in Lambda where g belongs to
+				state = Lambda.getIndex(g);   // get index of set in Lambda where g belongs to
 				i = g.size();
 			}
 			else {
@@ -135,8 +133,8 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 	}
 	
 	public void buildProbabilityDistributions(List<Integer> states) {	
-	    //  initializing the parameters
-		int N1 = N + 1;   //  N1 is the number of of different states
+	    	// initializing the parameters
+		int N1 = N + 1;   // N1 is the number of of different states
 		P = new float[N1][N1];
 		int [] Y = new int[N1];
 		for ( int i = 0; i < N1; ++i ) {    
@@ -176,7 +174,7 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 		LGS.generateVariableLengthSequences(trainingSequence, lengths, weights, weights2);
 		
 		LGS.sort(Sequence.SequenceFrequencyComparator);
-		Lambda = divideToSets();    //  divide the LGS (Library of General Sequences) into N-1 sets and store it in a Profile
+		Lambda = divideToSets();   //  divide the LGS (Library of General Sequences) into N-1 sets and store it in a Profile
 		
 		List<Integer> states = defineStates(trainingSequence);
 		System.out.println("states = " + states + ", size = " + states.size());
@@ -190,7 +188,6 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 		return detect(monitoredUserBehavior, thresholdDecision);
 	}
 	
-	// use this part for paper's overview
 	@Override
 	public DetectionResult detect(List<String> monitoredUserBehavior, double thresholdDecision) {
 		//  checking if monitoredUserBehavior data size is bigger than minSize to start the detection
@@ -199,12 +196,9 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 		ROCHelper rocHelper =  new ROCHelper();                                     
 		
 		List<Integer> states = defineStates(monitoredUserBehavior);
-//		System.out.println("states = " + states + ", size = " + states.size());
+		
 		List<String> stateSequences = preprocessStates(states);
-		
 		Map<String, Float> Probabilities = calculateProbabilities(states, stateSequences);
-//		System.out.println("Probabilities = " + Probabilities);
-		
 		List<Float> D = calculateDecisionValues(stateSequences, Probabilities, windowSize);
 	
 		// classify the decision values
@@ -213,7 +207,6 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 				rocHelper.add(decisionResult);
 		}
  		
-//		System.out.println();
 		return new DetectionResult(D, rocHelper.getNegativeRate(), rocHelper.getPositiveRate(), rocHelper.getNegative(), rocHelper.getPositive() );
 	}
 	
@@ -259,7 +252,7 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 		List<Float> D = new ArrayList<Float>();
 		
 		for ( int n = windowSize; n < stateSequences.size(); ++n )  {
-			// getting the summ= of Pr(qi) over the window windowSize
+			// getting the summ of Pr(qi) over the window windowSize
 			float summ = 0;
 			for ( int i = n - windowSize; i < n; ++i ) {
 				String stateSequence_i = stateSequences.get(i);   //  g contains l.get(i) elements
@@ -270,21 +263,6 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 		}
 	 	
 	 	return D;
-	}
-	
-	private void calculateDecisionValues2(ArrayList<String> stateSequences, Map<String, Float> Pr, int windowSize, ArrayList<Float> D) {
-
-		int u = 2;
-		for ( int n = windowSize; n < stateSequences.size() - u + 2; ++n ) {
-			//   getting the summ of Pr(qi) over the window windowSize
-			float summ = 0;
-			for ( int i = n - windowSize; i < n; ++i ) {
-				String stateSequence_i = stateSequences.get(i);   //  g contains l.get(i) elements
-				summ += Math.log( getProb( Pr.get(stateSequence_i) ) );
-			}
-			
-			D.add( summ / (float) windowSize);   //  D[n] = summ 
-		}
 	}
 
 	private float getProb(float probability) {
