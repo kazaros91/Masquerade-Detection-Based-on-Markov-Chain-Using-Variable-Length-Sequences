@@ -28,7 +28,7 @@ public class PlotXY {
 		this.plotName = plotName;
 		this.outputDirectory = outputDirectory;
 		
-		// Create Chart
+	    // Create Chart
 	    chart = new XYChart(800, 400);
 	    chart.setTitle(plotName);
 	    chart.setXAxisTitle(xName);
@@ -36,7 +36,6 @@ public class PlotXY {
 	}
 	
 	public void add(List<Float> yData, String seriesName) {
-//		 this.add(null, yData, seriesName);
 		 chart.addSeries(seriesName, null, yData);
 	}
 	
