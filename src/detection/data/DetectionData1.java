@@ -7,7 +7,7 @@ import org.javatuples.Pair;
 public class DetectionData {
 	private Pair<List<String>, List<String>> data;
 
-	public DetectionData1(List<String> falsePositiveData, List<String> truePositiveData) {
+	public DetectionData(List<String> falsePositiveData, List<String> truePositiveData) {
 		data = new Pair<List<String>, List<String>>(falsePositiveData, truePositiveData);
 	}
 
