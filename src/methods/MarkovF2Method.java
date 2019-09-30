@@ -118,7 +118,6 @@ public class MarkovF2Method extends MarkovMethod {
 		System.out.println("Training F2:\ntrainingSequence = " + trainingSequence + "\ntrainingSequence's size = " +  trainingSequence.size() );
 		LGS = new Library();
 		LGS.generateVariableLengthSequences(trainingSequence, lengths, weights, weights2);
-		filterProfile();
 		
 		LGS.sort(Sequence.SequenceFrequencyComparator);
 		Lambda = divideToSets();    //  divide the LGS (Library of General Sequences) into N-1 sets and store it in a Profile
