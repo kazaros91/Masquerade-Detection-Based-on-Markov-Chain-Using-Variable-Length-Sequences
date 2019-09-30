@@ -25,7 +25,7 @@ public class Table {
 	
 	
 	public Table() {
-		//Blank workbook
+	    //Blank workbook
 	    workbook = new XSSFWorkbook();
 	    //Create a blank sheet
 	    sheet = workbook.createSheet("Metrics");
@@ -85,18 +85,5 @@ public class Table {
 	        e.printStackTrace();
 	    }
 	}
-	
-//	public void visualize(String outputDirectory) {
-//		BarChart chart = new BarChart();
-////		for (Metric metrics in metrics_) 
-//		{
-//			chart.draw(outputDirectory);
-//		}
-//	}
-//
-//
-//	public void add(Table table0) {
-////		this.sb += table0(sb);
-//	}
-	
+
 }
