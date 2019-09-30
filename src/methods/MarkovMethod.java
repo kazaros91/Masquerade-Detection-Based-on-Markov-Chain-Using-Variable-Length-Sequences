@@ -44,9 +44,6 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 		Lambda = new Profile();
 
 	}
-	
-	@Override 
-	public void filterProfile() {}
 
 	//  Dividing LGS into N-1 sets 
 	public Profile divideToSets() {   		
