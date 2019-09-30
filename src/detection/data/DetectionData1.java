@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
-public class DetectionData1 {
+public class DetectionData {
 	private Pair<List<String>, List<String>> data;
 
 	public DetectionData1(List<String> falsePositiveData, List<String> truePositiveData) {
