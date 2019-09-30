@@ -8,7 +8,6 @@ import java.util.Map;
 
 import dao.DAO;
 import detection.data.DetectionData;
-import detection.data.DetectionData1;
 import methods.MarkovF2Method;
 import methods.MarkovMethod;
 import metrics.Metrics;
@@ -181,7 +180,7 @@ public class Experiment {
 				System.out.println();
 				
 				// defining detections stage's data
-				DetectionData1 detectionData = dao.getDetectionData(trainingId);
+				DetectionData detectionData = dao.getDetectionData(trainingId);
 				List<String> falsePositivesData = detectionData.getFalsePositiveData();
 				List< List<Float> > DD0 = ExperimentHelper.getDecisionValues(markov, detectionData);
 				List< List<Float> > DD1 = ExperimentHelper.getDecisionValues(markovN2, detectionData);
