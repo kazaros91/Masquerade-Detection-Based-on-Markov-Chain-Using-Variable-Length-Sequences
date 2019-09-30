@@ -31,111 +31,6 @@ public class Experiment {
 	private ArrayList<Metrics> metrics_list2;
 	String [] methodNames = {"Markov [4]", "MarkovN2 [4]", "MarkovF2"};
 	
-	/*
-	// REMOVE later: Begin
-	public void Schonlau(int W) {
-      // Schonlau
-		DAO.setParameters("Schonlau");
-		dir = System.getProperty("user.dir") + "/Schonlau_results" + String.valueOf(W+7);  // defining the directory to store the results
-		Utils.makeDir(dir);
-//		Utils.makeDir(dir); // add results as a separate folder
-		// BEGIN: defining the hyper parameters
-		// BEGIN: hyper parameters written in Experiments1, Experiments2, Experiments3, Experiments4
-		
-		// hyper parameters in common for the training stage for all methods in common, by default this case is Experiment3
-//		int W = 3;
-		lengths = new ArrayList<Integer>();
-		for ( int k = 0; k < W; ++k )
-			lengths.add(k+2);  // lengths == l
-
-		weights = new HashMap<Integer, Integer>();
-		for ( int k = 0; k < W; ++k )
-			weights.put( lengths.get(k), k+1 );  // weights == e
-		weights2 = new HashMap<Integer, Integer>();
-		for ( int k = 0; k < W; ++k )
-			weights2.put( lengths.get(k), k+1 );  // weights2 == e2 
-			
-		// hyper parameters in common for the detection stage in for all methods
-		windowSize = 81;
-		
-		// parameters for Markov Chain based methods' detection stage
-		eta = 0.28f;
-	}
-	
-	public void PU(int W) {
-        // PU
-		DAO.setParameters("PU");
-		dir = System.getProperty("user.dir") + "/PU_results" + String.valueOf(W-2);  // defining the directory to store the results
-		Utils.makeDir(dir);
-		// BEGIN: defining the hyper parameters
-		// BEGIN: hyper parameters written in Experiments1, Experiments2, Experiments3, Experiments4
-		
-		// hyper parameters in common for the training stage for all methods in common, by default this case is Experiement3
-//		int W = 3;
-		lengths = new ArrayList<Integer>();
-		for ( int k = 0; k < W; ++k )
-			lengths.add(k+1);  // lengths == l
-
-		weights = new HashMap<Integer, Integer>();
-		for ( int k = 0; k < W; ++k )
-			weights.put( lengths.get(k), k+1 );  // weights == e
-		weights2 = new HashMap<Integer, Integer>();
-		for ( int k = 0; k < W; ++k )
-			weights2.put( lengths.get(k), k+1 );  // weights2 == e2
-			
-		// hyper parameters in common for the detection stage in for all methods
-		windowSize = 66;
-		
-		// parameters for Markov Chain based methods' detection stage
-		eta = 0.1f;
-	}
-	
-	public void Greenberg(int W) {
-		// Greenberg
-		DAO.setParameters("Greenberg");
-		dir = System.getProperty("user.dir") + "/Greenberg_results" + String.valueOf(W+4);  // defining the directory to store the results
-		Utils.makeDir(dir);
-		        
-		// BEGIN: defining the hyper parameters
-		// BEGIN: hyper parameters written in Experiments1, Experiments2, Experiments3, Experiments4
-				
-		// hyper parameters in common for the training stage for all methods in common, by default this case is Experiement3
-//		int W = 3;
-		lengths = new ArrayList<Integer>();
-		for ( int k = 0; k < W; ++k )
-			lengths.add(k+1);  // lengths == l
-
-		weights = new HashMap<Integer, Integer>();
-		for ( int k = 0; k < W; ++k )
-			weights.put( lengths.get(k), k+1 );  // weights == e
-		weights2 = new HashMap<Integer, Integer>();
-		for ( int k = 0; k < W; ++k )
-			weights2.put( lengths.get(k), 2*k+1 );  // weights2 == e2 
-					
-		// hyper parameters in common for the detection stage in for all methods
-		windowSize = 45;
-				
-		// parameters for Markov Chain based methods' detection stage
-		eta = 0.1f;
-		// THESE ARE DATA DEPENDANT HYPERPARAMETERS. 
-//		Ideally, these parameters should be learned based on the data. However, it still remains an unsolved problem
-	}
-	// REMOVE later: End
-	
-	public String defineParameters(int W) {
-//		Schonlau(W);
-		PU(W);
-//		Greenberg(W);
-		Utils.writeToFile(dir, lengths, weights, weights2, windowSize, eta);
-		// END: hyper parameters written in Experiments folder
-		
-		thresholdDecision = 0.79f;   //  in applications it should be defined by cross validation
-		// END: defining the hyper parameters
-		
-		return dir;
-	}
-	*/
-	
 	Experiment() {
 		metrics_list0 = new ArrayList<Metrics>();
 		metrics_list1 = new ArrayList<Metrics>();
@@ -145,7 +40,7 @@ public class Experiment {
 	
 	public static void main(String [] args) {
 		// performing greed search for parameters
-		String [] datasetNames = {"Schonlau", "SEA", "SEA1v49", "PU", "Greenberg", "Greenberg1", "Greenberg2"};
+		String [] datasetNames = {"Schonlau", "SEA", "SEA1v49", "PU", "Greenberg"};
 		for (int windowSize = 21; windowSize <= 51; windowSize += 15 ) {
 //			Experiment experiment = new Experiment();
 			// TEST WITH 2 windowSizes, for instance, 81, 52. l = {1,2,3}, {2,3,4}
@@ -302,49 +197,21 @@ public class Experiment {
 				Metrics metrics0 = ExperimentHelper.getROCValues(markov, falsePositivesData, truePositivesData, methodNames[0]);
 				Metrics metrics1 = ExperimentHelper.getROCValues(markovN2, falsePositivesData, truePositivesData, methodNames[1]);
 				Metrics metrics2 = ExperimentHelper.getROCValues(markovF2, falsePositivesData, truePositivesData, methodNames[2]);
-//				
+				
 				metrics[0].add_all(metrics0); // metrics results for Markov [4]
 				metrics[1].add_all(metrics1); // metrics results for MarkovN2 [4]
 				metrics[2].add_all(metrics2); // metrics results for MarkovF2
 				
 				ExperimentHelper.plotROCCurves(testDir, windowSize, idPair, methodNames, metrics0, metrics1, metrics2);
 				
-			    // PU
-//				for 	( int id2 = 0; id2 < detectionData.getTruePositiveData().size(); ++id2 ) 
-//				{
-////					int id2 = 1;
-//					List<String> truePositivesData = detectionData.getTruePositiveData(id2);
-//					int detectionId = (id2 < trainingId - 1)? (id2 + 1) : (id2 + 2);   //  get relative user id
-//					final String idPair = "(trainingId = " + trainingId + ", detectionId = " + detectionId + ")";
-//					
-//					Metrics metrics0 = ExperimentHelper.getROCValues(markov, falsePositivesData, truePositivesData, methodNames[0]);
-//					Metrics metrics1 = ExperimentHelper.getROCValues(markovN2, falsePositivesData, truePositivesData, methodNames[1]);
-//					Metrics metrics2 = ExperimentHelper.getROCValues(markovF2, falsePositivesData, truePositivesData, methodNames[2]);
-////					
-//					metrics[0].add_all(metrics0); // metrics results for Markov [4]
-//					metrics[1].add_all(metrics1); // metrics results for MarkovN2 [4]
-//					metrics[2].add_all(metrics2); // metrics results for MarkovF2
-//					
-//					ExperimentHelper.plotROCCurves(testDir, windowSize, idPair, methodNames, metrics0, metrics1, metrics2);
-//				}
-//			}
 			}
-			
-			// DEL
-			Table table0 = new Table();
-			table0.add(metrics[0].avg(experiment_count), methodNames[0]);
-			table0.add(metrics[1].avg(experiment_count), methodNames[1]);
-			table0.add(metrics[2].avg(experiment_count), methodNames[2]);
-			table0.save(testDir + "_classification_report.xlsx");
 			
 			metrics_list0.add(metrics[0]);
 			metrics_list1.add(metrics[1]);
 			metrics_list2.add(metrics[2]);
 			
 			ExperimentHelper.plotROCCurves(testDir, windowSize, "Average", methodNames, metrics[0], metrics[1], metrics[2]);
-//			table0.visualize(testDir);
 		}
-//		save.metrics_max(); // best results of N
 	}
 
 }
