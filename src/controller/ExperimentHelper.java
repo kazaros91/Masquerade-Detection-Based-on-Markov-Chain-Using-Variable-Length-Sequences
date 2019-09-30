@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import detection.data.DetectionData;
-import detection.data.DetectionData1;
 import detection.data.DetectionResult;
 import methods.VariableLengthMethod;
 import metrics.Metrics;
@@ -15,7 +14,7 @@ import view.Table;
 public class ExperimentHelper {
 
 	// get Decision Values
-	public static List<List<Float>> getDecisionValues(VariableLengthMethod<?> method, DetectionData1 detectionData) {
+	public static List<List<Float>> getDecisionValues(VariableLengthMethod<?> method, DetectionData detectionData) {
 		List<List<Float>> DD = new ArrayList<List<Float>>();
 		DetectionResult result = method.detect( detectionData.getFalsePositiveData() );
 		DD.add(result.getDecisionValues());
