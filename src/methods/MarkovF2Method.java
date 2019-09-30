@@ -41,14 +41,6 @@ public class MarkovF2Method extends MarkovMethod {
  			return null;
  		List<String> gg = shortSequenceMax2;
  		
-//	 	int length = LGS.getWeightedFrequency(shortSequenceMax) > 0 ? shortSequenceMax.length() : 1;
-	 	// different from MarkovMethod
-//	 	int length2 = LGS.getWeightedFrequency2(shortSequenceMax2) > 0 ? shortSequenceMax2.length() : 1;
- 		
-// 		String g = ListString.getString(s, j, j + length);
- 	    // different from MarkovMethod
-// 		String gg = ListString.getString(s, j, j + length2);
- 		
  		// different from MarkovMethod
  		List<List<String>> pattern = new ArrayList<List<String>>();
  		pattern.add(g); pattern.add(gg);
@@ -135,7 +127,6 @@ public class MarkovF2Method extends MarkovMethod {
 		Lambda2 = divideToSets();
 		
 		List<Integer> states = defineStates(trainingSequence);
-//		System.out.println("states = " + states + ", size = " + states.size());
 
 		this.buildProbabilityDistributions(states);	
 	}
