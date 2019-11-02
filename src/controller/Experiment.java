@@ -135,7 +135,7 @@ public class Experiment {
 		// BEGIN: hyper parameters for Markov Chain based methods' training stage
 //		int N = 4;
 //		Metrics metrics_max = new Metrics();
-		for ( int N = 2; N <= 2; ++N ) {
+		for ( int N = 2; N <= 4; ++N ) {
 			// END: hyper parameters for Markov Chain based methods' training stage
 			String testDir = dir + "/TEST_N=" + N;
 			Utils.makeDir(testDir);
