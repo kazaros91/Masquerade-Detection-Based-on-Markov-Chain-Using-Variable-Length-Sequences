@@ -39,21 +39,19 @@ public class Experiment {
 	
 	public static void main(String [] args) {
 		// performing greed search for parameters
-		String [] datasetNames = {"Schonlau", "SEA", "SEA1v49", "PU", "Greenberg"};
-		for (int windowSize = 21; windowSize <= 51; windowSize += 15 ) {
-//			Experiment experiment = new Experiment();
-			// TEST WITH 2 windowSizes, for instance, 81, 52. l = {1,2,3}, {2,3,4}
-			for ( int dataset_idx = 4; dataset_idx <= 4; ++dataset_idx ) { // then 2
+		String [] datasetNames = {"SEA1v49", "PU", "Greenberg"};
+		for (int windowSize = 21; windowSize <= 81; windowSize += 15 ) {
+			for ( int dataset_idx = 1; dataset_idx <= 1; ++dataset_idx ) { // then 2
 				int experiementCount  = 0; // 16
 				Experiment experiment = new Experiment();
 				String datasetName = datasetNames[dataset_idx];
 				String dir0 = System.getProperty("user.dir") + "/" + datasetName
-										+ "1-4_window=" + windowSize +  "/";
+										+ "_window=" + windowSize +  "/";
 				Utils.makeDir(dir0);
 				for ( int W = 3; W <= 4; ++W ) {
-				for (int i2 = 2; i2 <= 2; ++i2 ) { // i2 is to help to define weights2 sets
-					for ( int i1 = 2; i1 <= 3; ++i1 ) {  // i1 is to help to define weights sets
-						for ( int i0 = 1; i0 <= 1; ++i0 ) { // i0 is to help to define different l sets THEN i0 = 2
+				for (int i2 = 2; i2 <= 2; ++i2 ) { // i2 is used to define weights2, i2=2 corresponds e2={1,3,5}
+					for ( int i1 = 2; i1 <= 2; ++i1 ) {  // i1 is used to define weights, i1=2 corresponds e1={2,3,4}
+						for ( int i0 = 2; i0 <= 2; ++i0 ) { // i0 is used to define different l sets, i0=2 corresponds l={2,3,4}
 								++experiementCount;
 								String dir = experiment.setParameters(dir0, experiementCount, datasetName, i0, i1, i2, windowSize, W);
 								experiment.performExperiments(dir, experiementCount);
@@ -61,8 +59,6 @@ public class Experiment {
 						}
 					}
 				}
-				// saving best results after greed search
-//				experiment.save_best_results(dir0); // uncomment to save 3 best results
 			}
 		}
 	}
