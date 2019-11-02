@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import detection.data.DetectionData;
-import pojo.UserBehavior;
-import pojo.UserBehaviorBuilder;
 
 
 public class DAO {
