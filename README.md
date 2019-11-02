@@ -27,7 +27,7 @@ Alternatively you experiment with the following datasets:
 1. Schonlau (download at http://www.schonlau.net/intrusion.html)
 2. Greenberg (download at http://saul.cpsc.ucalgary.ca/pmwiki.php upon with the request of its owner). Greenberg dataset must be converterted to Trunctated configuration (contain command names only) and pre-processed following the methodology in http://www.cs.cmu.edu/afs/cs.cmu.edu/user/maxion/www/pubs/MaxionDSN03.pdf
 
-The dataset should be placed in the running environment with the name "SEA1v49" in case of Schonlau or "Greenberg" in case of Greenberg. 
+Each dataset should be placed in the running environment with the name "SEA1v49" in case of Schonlau or "Greenberg" in case of Greenberg. 
 
 To run on Shrunk data settings go to DAO.java and change DAO.MAX_ID = 4 (line 133 in case of SEA1v49, line 141 in case of PU, line 149 in case of Greenberg).
 
