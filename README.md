@@ -5,7 +5,8 @@ b) Run src/controller/Experiment.java class file.
 
 After running is completed, the results are generated in PU_window=21, PU_window=36, PU_window=51, PU_window=66. Each folder contains hyperparameters.txt file as well as results for N = 2, 3, 4. 
  
-By default the data settings are PU Full data settings with the folowing hyperparameters:
+By default the dataset is Purdue (PU) downloaded from http://kdd.ics.uci.edu/databases/UNIX_user_data/UNIX_user_data.html. 
+The dataset must be converted into Truncated configuration. The data settings are PU Full data settings with the following hyperparameters:
 1. W = 3
 2. l = lengths = {2, 3, 4}
 3. e1 = weights = {2, 3, 4}
