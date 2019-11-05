@@ -1,5 +1,5 @@
 # Masquerade-Detection-Based-on-Markov-Chain-Using-Variable-Length-Sequences
-To run the code follow the following steps.
+To run the code follow these steps.
 1) Add all .jar files from “dependencies” folder to the Classpath.
 2) Run src/controller/Experiment.java class file.
 
