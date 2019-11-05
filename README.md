@@ -25,8 +25,8 @@ To change the default hyperparameters go to src/controller/Experiment.java file:
 7. eta (line 94) 
 
 Alternatively you experiment with the following datasets:
-1. Schonlau (download at http://www.schonlau.net/intrusion.html)
-2. Greenberg (download at http://saul.cpsc.ucalgary.ca/pmwiki.php upon with the request of its owner). Greenberg dataset must be converterted to Trunctated configuration (contain command names only) and pre-processed following the methodology in http://www.cs.cmu.edu/afs/cs.cmu.edu/user/maxion/www/pubs/MaxionDSN03.pdf
+1. Schonlau dataset (download at http://www.schonlau.net/intrusion.html). Go to DAO.java and uncomment lines (102-112).
+2. Greenberg dataset (download at http://saul.cpsc.ucalgary.ca/pmwiki.php upon with the request of its owner) must be converterted to Trunctated configuration (contain command names only) and pre-processed following the methodology in http://www.cs.cmu.edu/afs/cs.cmu.edu/user/maxion/www/pubs/MaxionDSN03.pdf. Go to DAO.java and uncomment lines (96-100).
 
 Each dataset should be placed in the running environment with the name "SEA1v49" in case of Schonlau or "Greenberg" in case of Greenberg. 
 
