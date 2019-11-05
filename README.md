@@ -1,7 +1,7 @@
 # Masquerade-Detection-Based-on-Markov-Chain-Using-Variable-Length-Sequences
 To run the code follow the following steps.
-a) Add all .jar files from “dependencies” folder to the Classpath.
-b) Run src/controller/Experiment.java class file.
+1) Add all .jar files from “dependencies” folder to the Classpath.
+2) Run src/controller/Experiment.java class file.
 
 After running is completed, the results are generated in PU_window=21, PU_window=36, PU_window=51, PU_window=66. Each folder contains hyperparameters.txt file as well as results for N = 2, 3, 4. 
  
