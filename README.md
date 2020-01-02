@@ -25,7 +25,7 @@ Alternatively you experiment with the following datasets:
 Each dataset should be placed in the running environment with the name “SEA” in case of Schonlau or "Greenberg" in case of Greenberg.
 To run on Shrunk data settings go to DAO.java and change DAO.MAX_ID = 4 (line 188 in case of SEA, line 195 in case of PU, line 203 in case of Greenberg).
 We found the best hyperparameters for SEA Shrunk and SEA Full listed as follows:
-	1.	l = lengths = {2, 3, 4}; (i0=2, line 54)
+	1.	l = lengths = {1, 2, 3}; (i0=2, line 54)
 	2.	e1 = weights = {1, 2, 3}; (i1=1, line 53)
 	3.	e2 = weights2 = {1, 2, 3}; (i2=1, line 52)
 We found the best hyperparameters for Greenberg Shrunk and Greenberg Full listed as follows:
