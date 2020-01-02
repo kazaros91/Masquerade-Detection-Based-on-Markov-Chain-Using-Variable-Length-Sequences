@@ -39,16 +39,16 @@ public class Experiment {
 	
 	public static void main(String [] args) {
 		// performing greed search for parameters
-		String [] datasetNames = {"SEA1v49", "PU", "Greenberg"};
-		for (int windowSize = 21; windowSize <= 81; windowSize += 15 ) {
+		String [] datasetNames = {"SEA", "PU", "Greenberg"};
+		for (int windowSize = 81; windowSize >= 21; windowSize -= 15 ) {
 			for ( int dataset_idx = 1; dataset_idx <= 1; ++dataset_idx ) { // then 2
-				int experiementCount  = 0; // 16
+				int experiementCount  = 0;
 				Experiment experiment = new Experiment();
 				String datasetName = datasetNames[dataset_idx];
 				String dir0 = System.getProperty("user.dir") + "/" + datasetName
-										+ "_window=" + windowSize +  "/";
+										+ "PU_FULL_TEST_window=" + windowSize +  "/";
 				Utils.makeDir(dir0);
-				for ( int W = 3; W <= 4; ++W ) {
+				for ( int W = 3; W <= 3; ++W ) {
 				for (int i2 = 2; i2 <= 2; ++i2 ) { // i2 is used to define weights2, i2=2 corresponds e2={1,3,5}
 					for ( int i1 = 2; i1 <= 2; ++i1 ) {  // i1 is used to define weights, i1=2 corresponds e1={2,3,4}
 						for ( int i0 = 2; i0 <= 2; ++i0 ) { // i0 is used to define different l sets, i0=2 corresponds l={2,3,4}
@@ -85,7 +85,7 @@ public class Experiment {
 		weights2 = new HashMap<Integer, Integer>();
 		for ( int k = 0; k < W; ++k )
 			weights2.put( lengths.get(k), i2*k+1 );  // weights2 == e2 	
-//			weights2.put( lengths.get(k), k+i2 );  // weights2 == e2 // RM
+//			weights2.put( lengths.get(k), k+i2 );  // weights2 == e2 	
 		
 		this.windowSize = windowSize;
 						
@@ -163,7 +163,7 @@ public class Experiment {
 			Metrics [] metrics = {new Metrics(dir), new Metrics(dir), new Metrics(dir)};
 //			ExperimentHelper.flush_ROC_data();
 			// defining the user id to get his commands for the training stage
-			for (int trainingId = 1; trainingId <= DAO.MAX_ID; ++trainingId )   //  trainingId == x in the paper
+			for (int trainingId = DAO.MIN_ID; trainingId <= DAO.MAX_ID; ++trainingId )   //  trainingId == x in the paper
 			{
 //				int trainingId = 3;
 				List<String> trainingSeq = dao.getTrainingData(trainingId);
@@ -200,6 +200,13 @@ public class Experiment {
 				ExperimentHelper.plotROCCurves(testDir, windowSize, idPair, methodNames, metrics0, metrics1, metrics2);
 				
 			}
+			
+			// save classification_report
+			Table table0 = new Table();
+			table0.add(metrics[0].avg(experiment_count), methodNames[0]);
+			table0.add(metrics[1].avg(experiment_count), methodNames[1]);
+			table0.add(metrics[2].avg(experiment_count), methodNames[2]);
+			table0.save(testDir + "_classification_report.xlsx");
 			
 			metrics_list0.add(metrics[0]);
 			metrics_list1.add(metrics[1]);

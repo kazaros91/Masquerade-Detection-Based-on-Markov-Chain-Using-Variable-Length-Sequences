@@ -7,11 +7,8 @@ import java.util.List;
 
 
 public class Metrics {
-	public float precision;
 	public float TPR;
 	public float FPR;
-	public float F1;
-	public float accuracy;
 	
 	private List<Float> FPRlist;
 	private List<Float> TPRlist;
@@ -52,11 +49,8 @@ public class Metrics {
 		= new Comparator<Metrics>() {
 			public int compare (Metrics metrics1, Metrics metrics2) {
 			int diff = 0;
-			diff += (Float.compare(metrics2.precision, metrics1.precision));
 			diff += (Float.compare(metrics2.TPR, metrics1.TPR));
 			diff += (Float.compare(metrics1.FPR, metrics2.FPR));
-			diff += (Float.compare(metrics2.F1, metrics1.F1));
-			diff += (Float.compare(metrics2.accuracy, metrics1.accuracy));
 			diff += (Double.compare(metrics1.threshold_decision, metrics2.threshold_decision));
  			// ascending
 			return diff;
@@ -65,35 +59,29 @@ public class Metrics {
 
 	
 	public static String [] titles() {
-		String [] titles = {"Precision", "TPR", "FPR", "F1", "Accuracy", "threshold_variance", "threshold_mean"};
+		String [] titles = {"TPR", "FPR", "threshold_variance", "threshold_mean"};
 		return titles;
 	}
 	
 	public float [] list() {
-		float [] metrics = {precision, TPR, FPR, F1, accuracy, threshold_variance, threshold_mean};
+		float [] metrics = {TPR, FPR, threshold_variance, threshold_mean};
 		return metrics;
 	}
 	
 	
 	public void update(float TP, float FN, float FP, float TN, double threshold) {
-		if (2*TP - FN - FP > this.max) {   // (TP - FP) + (TP - FN)
-			this.max = 2*TP - FP - FN;   // (TP - FP) + (TP - FN)
-		     
-		    this.precision = TP / (TP + FP);
-		    this.TPR = TP / (TP + FN); // recall
-		    this.FPR = FP / (FP + TN);
-		    this.F1 = 2*precision*TPR / (precision + TPR);
-		    this.accuracy = (TP + TN) / (TP + TN + FP + FN);
+		float TPR_temp = TP / (TP + FN);
+		float FPR_temp = FP / (FP + TN);
+		if (TPR_temp > this.TPR && FPR_temp <= 0.1) {   // (TP - FP) + (TP - FN)
+		    this.TPR = TPR_temp;
+		    this.FPR = FPR_temp;
 		    this.threshold_decision = threshold;
 		}
 	}
 	
 	public void add_all(Metrics metrics) {
-		this.precision += metrics.precision;
 		this.TPR += metrics.TPR;
 		this.FPR += metrics.FPR;
-		this.F1 += metrics.F1;
-		this.accuracy += metrics.accuracy;
 		this.thresholds.add(metrics.threshold_decision);
 		
 		this.add_ROC_series_all(metrics.getFPRValues_all(), metrics.getTPRValues_all());
@@ -101,11 +89,8 @@ public class Metrics {
 	}
 	
 	public Metrics avg(int experiment_count) {
-		this.precision /= (float) count;
 		this.TPR /= (float) count;
 		this.FPR /= (float) count;
-		this.F1 /= (float) count;
-		this.accuracy /= (float) count;
 		
 		threshold_mean_variance();
 		normalizeROC_all();

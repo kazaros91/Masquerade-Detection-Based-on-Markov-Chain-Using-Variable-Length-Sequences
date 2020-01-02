@@ -34,8 +34,9 @@ public class ExperimentHelper {
 		view.add( series.get(0), seriesName );
 		System.out.println("Decision Values(" + 0 + ") = "  + series.get(0));
 		for ( int i = 1; i < series.size(); ++i ) {
-			int id = (i < trainingId)? (i) : (i + 1);   //  get the relative user id
+			int id = (i < trainingId)? (i) : (i + 1); //  get the relative user id
 			seriesName = "masquerader: userId = " + id;
+			System.out.println(series.get(i));
 			view.add(series.get(i), seriesName);
 			System.out.println("Decision Values(" + i + ") = "  + series.get(i));
 		}
@@ -49,11 +50,8 @@ public class ExperimentHelper {
 			List<Float> xData_all = new ArrayList<Float>();
 			List<Float> yData_all = new ArrayList<Float>();
 			
-//			System.out.println(methodName + "\nbegin roc: ");
-			float avg_precision = 0f, avg_TPR = 0f, avg_FPR = 0f, avg_F1 = 0f, avg_accuracy = 0f;
 			Metrics metrics = new Metrics();
-//			double threshold = -0.041;
-			for ( double threshold = -0.5; threshold < 1.0; threshold = threshold + 0.002 ) 
+			for ( double threshold = -0.15; threshold < 1.0; threshold = threshold + 0.002 ) 
 			{
 				DetectionResult F = method.detect(falseData, threshold);
 				DetectionResult T = method.detect(trueData, threshold);
@@ -68,18 +66,8 @@ public class ExperimentHelper {
 					float FP = F.getPositives();
 					float TN = F.getNegatives();
 					metrics.update(TP, FN, FP, TN, threshold);
-//					boolean updated = metrics.update(TP, FN, FP, TN);
 				}	
-				
-				// uncomment to print FPR and TPR
-//				float FPR = falsePositive.getPositivesRate();
-//				float TPR = truePositive.getPositivesRate();
-//				if ( !(TPR == 1 && FPR == 1) && (TPR - FPR) > 0.2 )
-//				{
-//					System.out.println( "FPR = " + FPR + ", TPR = " + TPR + ", threshold = " + threshold);
-//				}
 			}
-//			System.out.println("end roc\n");
 
 		metrics.add_ROC_series(xData, yData);
 		metrics.add_ROC_series_all(xData_all, yData_all);

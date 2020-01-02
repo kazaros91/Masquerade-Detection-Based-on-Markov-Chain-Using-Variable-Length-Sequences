@@ -1,212 +1,212 @@
-package controller;
+package dao;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-
-import dao.DAO;
 import detection.data.DetectionData;
-import methods.MarkovF2Method;
-import methods.MarkovMethod;
-import metrics.Metrics;
-import view.Table;
 
 
-public class Experiment {
+public class DAO {
 	
-	private List<Integer> lengths;
-	private Map<Integer, Integer> weights;
-	private Map<Integer, Integer> weights2;
-	private int windowSize;
-	private double eta;
-	private float thresholdDecision;
+	private static boolean isRead = false;
+	private static String input;
 	
-	private String dir;
+	public static int MIN_ID = 1;
+	public static int MAX_ID = 5;
 	
-	private ArrayList<Metrics> metrics_list0;
-	private ArrayList<Metrics> metrics_list1;
-	private ArrayList<Metrics> metrics_list2;
-	String [] methodNames = {"Markov [4]", "MarkovN2 [4]", "MarkovF2"};
+	private static int TRAINING_DATA_SIZE;
+	private static int DETECTION_DATA_SIZE;
+	private static int DETECTION_DATA_SIZE2;
 	
-	Experiment() {
-		metrics_list0 = new ArrayList<Metrics>();
-		metrics_list1 = new ArrayList<Metrics>();
-		metrics_list2 = new ArrayList<Metrics>();
-		dir = "";
+	private static String dataset_name;
+	
+	private List<Integer> positions_;
+ 
+	
+	public DAO() {
+		getPositionsFromTXT("masquerade_SEA.txt");
 	}
-	
-	public static void main(String [] args) {
-		// performing greed search for parameters
-		String [] datasetNames = {"SEA1v49", "PU", "Greenberg"};
-		for (int windowSize = 21; windowSize <= 81; windowSize += 15 ) {
-			for ( int dataset_idx = 1; dataset_idx <= 1; ++dataset_idx ) { // then 2
-				int experiementCount  = 0; // 16
-				Experiment experiment = new Experiment();
-				String datasetName = datasetNames[dataset_idx];
-				String dir0 = System.getProperty("user.dir") + "/" + datasetName
-										+ "_window=" + windowSize +  "/";
-				Utils.makeDir(dir0);
-				for ( int W = 3; W <= 4; ++W ) {
-				for (int i2 = 2; i2 <= 2; ++i2 ) { // i2 is used to define weights2, i2=2 corresponds e2={1,3,5}
-					for ( int i1 = 2; i1 <= 2; ++i1 ) {  // i1 is used to define weights, i1=2 corresponds e1={2,3,4}
-						for ( int i0 = 2; i0 <= 2; ++i0 ) { // i0 is used to define different l sets, i0=2 corresponds l={2,3,4}
-								++experiementCount;
-								String dir = experiment.setParameters(dir0, experiementCount, datasetName, i0, i1, i2, windowSize, W);
-								experiment.performExperiments(dir, experiementCount);
-							}
-						}
+
+	private void getPositionsFromTXT(String inputFilename) {
+		inputFilename = System.getProperty("user.dir") + "/" + inputFilename;
+//		System.out.println("FILENAME: " + inputFilename);	
+		
+		BufferedReader input;
+		positions_ =  new ArrayList<Integer>();
+		try { 
+			input = new BufferedReader(new FileReader(new File(inputFilename)));
+			
+			int idx = 0;
+			String line = "";
+			String[] row = null;
+			while ( ( line = input.readLine() ) != null ) {
+				row = line.replace("\\", "").split(" ");		
+				++idx;
+//				System.out.println("line: " + idx + " " + line);
+				for ( int j = 0; j < row.length; ++j ) {
+					try {
+						Integer position = Integer.parseInt(row[j]);
+						positions_.add(position);
+					}
+					catch (NumberFormatException e) {
+						e.printStackTrace();
 					}
 				}
 			}
+			input.close();
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}     
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+			finally {
 		}
 	}
-	
-	public String setParameters(String dir0, int experimentCount, String datasetName, int i0, int i1, int i2, int windowSize, int W) {
-		// set training and detection data sizes 
-		DAO.setParameters(datasetName);
-		
-		// create a directory to store the experimental results
-		// defining the directory to store the results
-		dir = dir0 + experimentCount;
-		Utils.makeDir(dir);
-				        
-		// BEGIN: defining the hyper parameters
-		// BEGIN: hyper parameters those written in the hyperparameters.txt file		
-		// hyper parameters in common for the training stage for all methods in common, by default this case is Experiement3
-		lengths = new ArrayList<Integer>();
-		for ( int k = 0; k < W; ++k )
-			lengths.add(k+i0);  // lengths == l
 
-		weights = new HashMap<Integer, Integer>();
-		for ( int k = 0; k < W; ++k )
-			weights.put( lengths.get(k), k+i1 );  // weights == e
-		weights2 = new HashMap<Integer, Integer>();
-		for ( int k = 0; k < W; ++k )
-			weights2.put( lengths.get(k), i2*k+1 );  // weights2 == e2 	
-//			weights2.put( lengths.get(k), k+i2 );  // weights2 == e2 // RM
+	public List<String> getCommandsFromCSV(int userId) {
+		List<String> commands = new ArrayList<String>();
 		
-		this.windowSize = windowSize;
-						
-		// parameters for Markov Chain based methods' detection stage
-//		eta = 0.28;
-		eta = 0.1;
-		// THESE ARE DATA DEPENDANT HYPERPARAMETERS. 
-//		Ideally, these parameters should be learned based on the data. However, it still remains an unsolved problem		
+		final String currentDirectory = System.getProperty("user.dir");
+		final String inputFilename = currentDirectory + dataset_name + userId;
 		
-		Utils.writeToFile(this.dir, this.lengths, this.weights, this.weights2, this.windowSize, this.eta);
-		// END: hyper parameters written in Experiments folder
+		BufferedReader input;
 		
-		thresholdDecision = 0.79f;   //  in applications it should be defined by cross validation
-		// END: defining the hyper parameters
-		
-		return dir;
-	}	
-	
-	
-	private void save_best_results(String dir0) {
-		metrics_list0.sort(Metrics.MetricsComparator);
-		metrics_list1.sort(Metrics.MetricsComparator);
-		metrics_list2.sort(Metrics.MetricsComparator);
-		
-		// save 5 best results
-		for ( int i = 1; i <= 5; ++ i) {
-			Table table_best = new Table();
-			table_best.add(metrics_list0.get(i), methodNames[0]);
-			table_best.add(metrics_list1.get(i), methodNames[1]);
-			table_best.add(metrics_list2.get(i), methodNames[2]);
+		try { 
+			input = new BufferedReader(new FileReader(new File(inputFilename)));
 			
-			System.out.println();
-			System.out.println( metrics_list0.get(i).getDir() );
-			System.out.println( metrics_list1.get(i).getDir() );
-			System.out.println( metrics_list1.get(i).getDir() );
-
-			String path = dir0 + "best_reports/";
-			Utils.makeDir(path);
-			table_best.save(path + i + "_" + metrics_list0.get(i).experiment_count + ", " 
-										   + metrics_list1.get(i).experiment_count + ", " 	
-										   + metrics_list2.get(i).experiment_count +".xlsx");
-		}
-	}
-	
-	
-	public void performExperiments(String dir, int experiment_count) {
-		// BEGIN: hyper parameters for Markov Chain based methods' training stage
-//		int N = 4;
-//		Metrics metrics_max = new Metrics();
-		for ( int N = 2; N <= 2; ++N ) {
-			// END: hyper parameters for Markov Chain based methods' training stage
-			String testDir = dir + "/TEST_N=" + N;
-			Utils.makeDir(testDir);
+			String line = "";
+			String[] st = null;
 			
-			// BEGIN: MARKOV CHAIN BASED METHODS
-			// Markov [4] method
-			MarkovMethod markov = new MarkovMethod();
-			markov.setTrainingParameters(lengths, N, weights, weights2);
-			markov.setDetectionParameters(windowSize, eta, thresholdDecision);
-			
-			// MarkovN2 [4] method
-			MarkovMethod markovN2 = new MarkovMethod();
-			markovN2.setTrainingParameters(lengths, N*N, weights, weights2);
-			markovN2.setDetectionParameters(windowSize, eta, thresholdDecision);
-						
-			// MarkovF2 method
-			MarkovF2Method markovF2 = new MarkovF2Method();
-			markovF2.setTrainingParameters(lengths, N, weights, weights2);
-			markovF2.setDetectionParameters(windowSize, eta, thresholdDecision);
-			// END: MARKOV CHAIN BASED METHODS
-			
-			// initializing of Datasource Object
-			DAO dao = new DAO();
-			Table table = new Table();
-			Metrics [] metrics = {new Metrics(dir), new Metrics(dir), new Metrics(dir)};
-//			ExperimentHelper.flush_ROC_data();
-			// defining the user id to get his commands for the training stage
-			for (int trainingId = 1; trainingId <= DAO.MAX_ID; ++trainingId )   //  trainingId == x in the paper
-			{
-//				int trainingId = 3;
-				List<String> trainingSeq = dao.getTrainingData(trainingId);
-				
-				markov.train(trainingSeq);
-				System.out.println();
-				markovN2.train(trainingSeq);
-				System.out.println();
-				markovF2.train(trainingSeq);
-				System.out.println();
-				
-				// defining detections stage's data
-				DetectionData detectionData = dao.getDetectionData(trainingId);
-				List<String> falsePositivesData = detectionData.getFalsePositiveData();
-				List< List<Float> > DD0 = ExperimentHelper.getDecisionValues(markov, detectionData);
-				List< List<Float> > DD1 = ExperimentHelper.getDecisionValues(markovN2, detectionData);
-				List< List<Float> > DD2 = ExperimentHelper.getDecisionValues(markovF2, detectionData);
-				
-				ExperimentHelper.plotDecisionValues(testDir, windowSize, methodNames[0], trainingId, DD0);
-				ExperimentHelper.plotDecisionValues(testDir, windowSize, methodNames[1], trainingId, DD1);
-				ExperimentHelper.plotDecisionValues(testDir, windowSize, methodNames[2], trainingId, DD2);
-				
-				List<String> truePositivesData = detectionData.getTruePositiveData();
-				final String idPair = "(trainingId = " + trainingId + ", detectionId = " + trainingId + ")";
-				
-				Metrics metrics0 = ExperimentHelper.getROCValues(markov, falsePositivesData, truePositivesData, methodNames[0]);
-				Metrics metrics1 = ExperimentHelper.getROCValues(markovN2, falsePositivesData, truePositivesData, methodNames[1]);
-				Metrics metrics2 = ExperimentHelper.getROCValues(markovF2, falsePositivesData, truePositivesData, methodNames[2]);
-				
-				metrics[0].add_all(metrics0); // metrics results for Markov [4]
-				metrics[1].add_all(metrics1); // metrics results for MarkovN2 [4]
-				metrics[2].add_all(metrics2); // metrics results for MarkovF2
-				
-				ExperimentHelper.plotROCCurves(testDir, windowSize, idPair, methodNames, metrics0, metrics1, metrics2);
-				
+			while ( ( line = input.readLine() ) != null ) {
+				st = line.split("\n");
+				String command = st[0];
+				commands.add(command);
 			}
-			
-			metrics_list0.add(metrics[0]);
-			metrics_list1.add(metrics[1]);
-			metrics_list2.add(metrics[2]);
-			
-			ExperimentHelper.plotROCCurves(testDir, windowSize, "Average", methodNames, metrics[0], metrics[1], metrics[2]);
+			input.close();
 		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}     
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+		}
+		
+		return commands;   //  note that the actions are ordered chronologically in the .csv file
+	}
+	
+	public List<List<String>> getAllData() {
+		List<List<String>> data = new ArrayList<List<String>>();
+		for (int id = DAO.MIN_ID; id <= DAO.MAX_ID; ++id) {
+			data.add(this.getCommandsFromCSV(id));
+		}	
+		
+		return data;
+	}
+	
+	//  all of the following methods to get the data for training and detection stages
+	public List<String> getTrainingData(int id) {
+		 List<String> User = this.getCommandsFromCSV(id);
+		 List<String> trainingData = User.subList(0, DAO.TRAINING_DATA_SIZE);
+		 
+		 return trainingData;
+	}
+	
+	public DetectionData getDetectionData(int id) {
+		 List<String> User = this.getCommandsFromCSV(id);
+		 System.out.println("User" + id + " size: " + User.size());
+
+		 // get the last the last DAO.DETECTION_DATA_SIZE number of commands of USER(id)
+		 List<String> falsePositiveData = new ArrayList<String>();
+		 falsePositiveData = User.subList(  DAO.TRAINING_DATA_SIZE, DAO.TRAINING_DATA_SIZE + DAO.DETECTION_DATA_SIZE );
+		 System.out.println("falsePositiveData: userId = " + id + ", data size = " +  falsePositiveData.size() );
+		 
+//		 // Greenberg
+//		 List<String> truePositiveData = new ArrayList<String>();
+//		 truePositiveData = User.subList(  DAO.TRAINING_DATA_SIZE + DAO.DETECTION_DATA_SIZE, DAO.TRAINING_DATA_SIZE + DAO.DETECTION_DATA_SIZE + DAO.DETECTION_DATA_SIZE2);
+//		 System.out.println("falsePositiveData: userId = " + id + ", data size = " +  falsePositiveData.size() );
+//		 System.out.println("truePositiveData: userId = " + id + ", data size = " +  truePositiveData.size() );
+		 
+//		 // SEA
+//		 falsePositiveData = new ArrayList<String>();
+//		 List<String> truePositiveData = new ArrayList<String>();
+//		 // get User_id_positions
+//		 int index = id - 1;
+//		 List<Integer> Useri_positions = new ArrayList<Integer>();
+//		 for ( int i = 0; i < 100; ++i ) {
+//			 Useri_positions.add( positions_.get(50*i + index) );
+//		 } 
+//		 // yield normal and masquerade test sets
+//		 // get the last the last DAO.DETECTION_DATA_SIZE commands of User
+//		 List<String> PositiveData = User.subList(  DAO.TRAINING_DATA_SIZE, DAO.TRAINING_DATA_SIZE + DAO.DETECTION_DATA_SIZE );
+//		 for ( int j=0; j<100; ++j) {
+//			 List<String> block = PositiveData.subList(100*j, 100*j + 100);
+//			 int value = Useri_positions.get(j); 
+//			 if (value == 1)
+//				 truePositiveData.addAll(block);
+//			 else
+//				 falsePositiveData.addAll(block);
+//			 
+//		 }
+//		 System.out.println("falsePositiveData: userId = " + id + ", data size = " +  falsePositiveData.size() );
+//		 System.out.println("truePositiveData: userId = " + id + ", data size = " +  truePositiveData.size() );
+	
+		 //	PU
+		 // get the last the last DAO.DETECTION_DATA_SIZE number of commands of all users except USER(id)
+		 List<String> truePositiveData = new ArrayList<String>();
+		 for (int i = DAO.MIN_ID; i < id; ++i) {
+			 List<String> Useri =  this.getCommandsFromCSV(i);
+			 truePositiveData.addAll( Useri.subList( DAO.TRAINING_DATA_SIZE, DAO.TRAINING_DATA_SIZE + DAO.DETECTION_DATA_SIZE ) );
+		 }
+		 for (int i = id + 1; i <= DAO.MAX_ID; ++i) {
+			 List<String> Useri = this.getCommandsFromCSV(i);
+			truePositiveData.addAll( Useri.subList( DAO.TRAINING_DATA_SIZE, DAO.TRAINING_DATA_SIZE + DAO.DETECTION_DATA_SIZE ) );
+		 }
+		 DetectionData data = new DetectionData(falsePositiveData, truePositiveData);
+		 
+		 return data;
 	}
 
+	public static void setParameters(String dataset_name) {
+	    if (dataset_name.equals("SEA")) {
+	        DAO.dataset_name = "/Schonlau/User";
+			DAO.MIN_ID = 1;
+			DAO.MAX_ID = 50;
+			DAO.TRAINING_DATA_SIZE = 5000; // 10000
+			DAO.DETECTION_DATA_SIZE = 10000; // 5000
+	    }
+	    else if (dataset_name.equals("PU")) {
+			DAO.dataset_name = "/PU/USER";
+			DAO.MIN_ID = 1;
+			DAO.MAX_ID = 8;
+			DAO.TRAINING_DATA_SIZE = 1500; // 1500
+			DAO.DETECTION_DATA_SIZE = 500; // 500
+			DAO.DETECTION_DATA_SIZE2 = DAO.DETECTION_DATA_SIZE; // 1000
+		}
+	    else if (dataset_name.equals("Greenberg")) {
+			DAO.dataset_name = "/Greenberg/USER";
+			DAO.MIN_ID = 1;
+			DAO.MAX_ID = 50; // 50
+			DAO.TRAINING_DATA_SIZE = 1000; // 1000
+			DAO.DETECTION_DATA_SIZE = 1000; // 1000 normal test data size
+			DAO.DETECTION_DATA_SIZE2 = 300; // 300 masquerade test data size
+		}
+		else {
+			System.out.println("no dataset with name: " + dataset_name);
+		}
+	}
 }

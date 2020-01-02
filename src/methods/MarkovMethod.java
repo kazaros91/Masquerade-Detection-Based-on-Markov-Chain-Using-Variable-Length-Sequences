@@ -188,6 +188,12 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 	@Override
 	public DetectionResult detect(List<String> monitoredUserBehavior, double thresholdDecision) {
 		//  checking if monitoredUserBehavior data size is bigger than minSize to start the detection
+		if ( monitoredUserBehavior.isEmpty() ) { // this can happen for SEA data settings only 
+			List<Float> D = new ArrayList<Float>();
+			D.add(-1.0f);
+			return new DetectionResult(D, 0f, 1f, 0f, 1f);
+		}			 
+
 		checkIfStartDetection( monitoredUserBehavior.size() );
 			
 		ROCHelper rocHelper =  new ROCHelper();                                     
@@ -200,7 +206,7 @@ public class MarkovMethod implements VariableLengthMethod<String> {
 	
 		// classify the decision values
 		for ( int i = 0; i < D.size(); ++i ) {
-				boolean decisionResult = ( D.get(i) >= thresholdDecision ) ? false : true;
+				boolean decisionResult = ( D.get(i) > thresholdDecision ) ? false : true;
 				rocHelper.add(decisionResult);
 		}
  		
