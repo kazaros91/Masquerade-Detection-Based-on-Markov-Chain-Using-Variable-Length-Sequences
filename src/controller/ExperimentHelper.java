@@ -51,7 +51,7 @@ public class ExperimentHelper {
 			List<Float> yData_all = new ArrayList<Float>();
 			
 			Metrics metrics = new Metrics();
-			for ( double threshold = -0.15; threshold < 1.0; threshold = threshold + 0.002 ) 
+			for ( double threshold = -1.0; threshold < 1.0; threshold = threshold + 0.002 ) 
 			{
 				DetectionResult F = method.detect(falseData, threshold);
 				DetectionResult T = method.detect(trueData, threshold);
