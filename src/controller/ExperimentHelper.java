@@ -57,7 +57,7 @@ public class ExperimentHelper {
 				DetectionResult T = method.detect(trueData, threshold);
 				xData_all.add( F.getPositivesRate() ); // FPR_all
 				yData_all.add( T.getPositivesRate() ); // TPR_all
-				if (F.getPositivesRate() <= 0.17) {
+				if (F.getPositivesRate() <= 0.1) {
 					xData.add( F.getPositivesRate() ); // FPR
 					yData.add( T.getPositivesRate() ); // TPR
 					
